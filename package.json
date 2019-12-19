@@ -1,0 +1,14 @@
+{
+  "name": "compux",
+  "version": "1.0.0",
+  "description": "Making Component management easy",
+  "main": "index.js",
+  "bin": {
+    "compux": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Shubham Kamath",
+  "license": "ISC"
+}
