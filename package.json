@@ -1,7 +1,7 @@
 {
   "homepage": "https://github.com/shubhaemk/compux",
   "name": "compux",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Making Component management easy",
   "main": "index.js",
   "bin": {
