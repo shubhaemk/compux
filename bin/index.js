@@ -1,31 +1,6 @@
 #!/usr/bin/env node
-
-/*
- * GOAL 1
- * 1. If src/components exist, create files by given component name
- * 2. If src/components !exist, create components and then add component
- * 3. Check for css/scss flag
- */
-"use strict";
-
-var path = require('path');
-
-var appDirectory = process.cwd();
-var srcDirectory = path.resolve(appDirectory, 'src');
-var componentDirectory = path.resolve(srcDirectory, 'components');
-/**
- * 1. file module - check, create component
- * 2. Path module - path resolve and various path related data
- * 3. Error handling module - printing a error is a task!
- */
-
-var fs = require('fs');
-
-fs.access(componentDirectory, fs.constants.W_OK, function (error) {
-  if (error) {
-    console.log('lol');
-    console.log(error.message);
-  } else {
-    console.log('OK');
-  }
-});
+"use strict";var _path=require("path");function _toArray(a){return _arrayWithHoles(a)||_iterableToArray(a)||_nonIterableRest()}function _nonIterableRest(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}function _iterableToArray(a){if(Symbol.iterator in Object(a)||"[object Arguments]"===Object.prototype.toString.call(a))return Array.from(a)}function _arrayWithHoles(a){if(Array.isArray(a))return a}/**
+ * srcDirectory - Represents source directory
+ * componentDirectory - Represents component directory in src
+ * argv - Array of passed options
+ */var srcDirectory=(0,_path.resolve)(process.cwd(),"src"),componentDirectory=(0,_path.resolve)(srcDirectory,"components"),_process$argv=_toArray(process.argv),argv=_process$argv.slice(2),_main=function(a){1<a.length&&console.log("Error! I dont accept more than 1 parameter!")};_main(argv);
