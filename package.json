@@ -3,14 +3,24 @@
   "name": "compux",
   "version": "1.0.2",
   "description": "Making Component management easy",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shubhaemk/compux.git"
+  },
   "main": "index.js",
   "bin": {
     "compux": "./bin/index.js"
   },
   "scripts": {
+    "build": "babel src/index.js --out-file bin/index.js",
     "clean": "rm -rf /usr/local/bin/compux && npm link",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Shubham Kamath",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7"
+  }
 }
