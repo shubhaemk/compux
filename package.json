@@ -5,9 +5,10 @@
   "description": "Making Component management easy",
   "main": "index.js",
   "bin": {
-    "compux": "./index.js"
+    "compux": "./bin/index.js"
   },
   "scripts": {
+    "clean": "rm -rf /usr/local/bin/compux && npm link",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Shubham Kamath",
