@@ -12,6 +12,7 @@ const componentDirectory = resolve(srcDirectory,'components');
 const [,,...argv] = process.argv;
 
 let componentName;
+let componentNameCc;
 
 //need fix : should only work for abc-abc and not abc-abc-abc...
 const checkComponentName = name => {
@@ -39,13 +40,14 @@ const checkDirectory = directory => {
     
 }
 
-const _main = argv => {
+const _main = (argv) => {
     if(argv.length > 1){
         console.log('Error! I dont accept more than 1 parameter!')
     }else{
-        if(checkComponentName(argv[0])){
-            componentName = getComponentName(argv[0]);
-
+        componentName = argv[0];
+        if(checkComponentName(componentName)){
+            componentNameCc = getComponentName(componentName);
+            
         }else{
             console.log(`Use component name of format 'component-name'`)
         }
