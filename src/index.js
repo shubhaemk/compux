@@ -38,8 +38,21 @@ const getComponentName = name => {
 }
 
 const checkDirectory = directory => {
-    return new Promise();
-}
+    return new Promise((resolve,reject)=>{
+        stat(directory,(err,stats)=>{
+            if (err){
+                reject(false);
+                return;
+            }
+            if (stats.isDirectory()){
+                resolve(true);
+                return;
+            }
+            reject(false);
+            return;
+        });
+    });
+};
 
 const checkExist = async (directory) => {
     return new Promise((resolve,reject)=>{
@@ -48,14 +61,19 @@ const checkExist = async (directory) => {
                 reject(false);
             }
             try{
-                await checkDirectory(directory);
-                resolve(true);
-            }catch(err){
-                reject(false);
+                let directoryExist = await checkDirectory(directory);
+                if (directoryExist) {
+                    resolve(true);
+                }
+            }catch(error){
+                console.log(`
+                    -------------${error}-----------
+                `)
+                resolve(false);
             }
         });
     });
-}
+};
 
 const createDirectory = directory => {
     console.log(`Creating ${directory} ...`)
@@ -91,7 +109,7 @@ const _main = async (argv) => {
                 createDirectory(componentsDirectory);
             }
 
-            try {
+            /* try {
                 let componentDirExist = await checkExist(componentsDirectory,componentName);
                 if (componentDirExist) {
                     console.log(`${componentName} already exists!`);
@@ -100,7 +118,7 @@ const _main = async (argv) => {
                 console.log(`/${componentName} does not exist!`);
                 console.log(`Creating /${componentName} for you!`);
                 createDirectory(resolve(componentsDirectory,componentName));
-            }
+            } */
             
         }else{
             console.log(`Use component name of format 'component-name'`)
