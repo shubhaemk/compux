@@ -14,17 +14,29 @@ const [,,...argv] = process.argv;
 let componentName;
 
 //need fix : should only work for abc-abc and not abc-abc-abc...
-const checkComponentName = name => RegExp('[a-zA-Z]+[-][a-zA-Z]+').test(name);
+const checkComponentName = name => {
+    //RegExp('[a-zA-Z]+[-][a-zA-Z]+').test(name) doesn't work might do manual search!
+    
+    if(name.lastIndexOf('-') !== name.indexOf('-'))
+    return false;
+
+    for(let char of name){
+        if(isNaN(char) === false)
+        return false;
+    }
+
+    return true;
+}
 
 const getComponentName = name => {
     const nameArr = name.split('-');
     const first = nameArr[0].charAt(0).toUpperCase() + nameArr[0].slice(1);
     const second = nameArr[1].charAt(0).toUpperCase() + nameArr[1].slice(1);
-    return `${first}${second}`;
+    return `${first}${second}`
 }
 
 const checkDirectory = directory => {
-
+    
 }
 
 const _main = argv => {
