@@ -14,7 +14,7 @@
   "scripts": {
     "build": "babel src/index.js --out-file bin/index.js",
     "clean": "rm -rf /usr/local/bin/compux && npm link",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run build && compux comp-name"
   },
   "author": "Shubham Kamath",
   "license": "ISC",
@@ -23,5 +23,8 @@
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
     "babel-preset-minify": "^0.5.1"
+  },
+  "dependencies": {
+    "regenerator-runtime": "^0.13.3"
   }
 }
