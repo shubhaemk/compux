@@ -89,48 +89,35 @@ const fileCreate = file => {
     });
 };
 
-const componentCreatePromise = directory => {
-    return new Promise((resolve,reject) => {
-        fileExists(directory.name)
-            .then(srcExist => {
-                if (srcExist) {
-                    console.log(`found - ${directory.name}`);
-                }
-                return fileType(directory.name);
-            })
-            .then(isDir => {
-                console.log(`isDirectory? true - ${directory.name}`);
-                resolve();
-            })
-            .catch(error => {
-                if (error.code === 4000 && directory.create) {
-                    console.log(`creating - ${directory.name}`);
-                    return fileCreate(directory.name);
-                }
-                if (error.code === 4001) {
-                    console.log(`isDirectory? false - ${directory.name}`);
-                    reject(error);
-                }
-            })
-            .then(success => {
-                if (success) {
+const componentCreatePromise = async (directory) => {
+    return new Promise( async (resolve,reject) => {
+        try{
+            await fileExists(directory.name);
+            console.log(`found - ${directory.name}`);
+            await fileType(directory.name);
+            console.log(`isDirectory? true - ${directory.name}`);
+        }catch(error){
+            if (error.code === 4000 && directory.create) {
+                console.log(`creating - ${directory.name}`);
+                try{
+                    await fileCreate(directory.name);
                     console.log(`created - ${directory.name}`);
                     resolve();
+                }catch(error){
+                    reject(error);
                 }
-            })
-            .catch(error => {
-                console.log(error);
+            }
+            if (error.code === 4001) {
+                console.log(`isDirectory? false - ${directory.name}`);
                 reject(error);
-            });
+            }
+        }
     });
 };
 
-const componentCreate = (listDir) => {
+const componentCreate = async (listDir) => {
     return Promise.all(listDir.map(dir => componentCreatePromise(dir)));
 }
-
-
-
 
 const _main = async (argv) => {
     if(argv.length > 1){
@@ -157,7 +144,7 @@ const _main = async (argv) => {
             ];
 
             try{
-                let x = componentCreate(listDir);
+                let x = await componentCreate(listDir);
                 if(x){
                     console.log('Done!');
                 }
