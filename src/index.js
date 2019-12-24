@@ -83,7 +83,7 @@ const componentCreatePromise = directory => {
     return new Promise(async (resolve,reject) => {
         try{
             await fileExists(directory.name);
-            if(directory.create){
+            if(directory.checkIfExist){
                 reject({
                     code: 4004,
                     file: directory.name
@@ -91,12 +91,13 @@ const componentCreatePromise = directory => {
             }else{
                 try {
                     await fileType(directory.name);
+                    resolve();
                 } catch (error) {
                     reject(error);
                 }
             }
         }catch(error){
-            if (error.code === 4000 && directory.create) {
+            if (error.code === 4000) {
                 try{
                     await fileCreate(directory.name);
                     resolve();
@@ -104,9 +105,7 @@ const componentCreatePromise = directory => {
                     reject(error);
                 }
             }
-            if (error.code === 4001) {
-                reject(error);
-            }
+            reject(error);
         }
     });
 };
@@ -127,24 +126,23 @@ const _main = async (argv) => {
             const listDirectory = [
                 {
                     name: srcDirectory,
-                    create: false
+                    checkIfExist: false
                 },
                 {
                     name: componentsDirectory,
-                    create: false
+                    checkIfExist: false
                 },
                 {
                     name: componentDirectory,
-                    create: true
+                    checkIfExist: true
                 }
             ];
 
             try{
-                let x = await componentCreate(listDirectory);
-                if(x){
-                    console.log('Done!');
-                }
+                await componentCreate(listDirectory);
+                
             }catch(error){
+                //do error handling
                 console.log(error);
             }
             
