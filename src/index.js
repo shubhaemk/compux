@@ -21,6 +21,23 @@ const checkComponentName = name => {
     return true;
 }
 
+const getListDirectory = componentDirectory => (
+    [
+        {
+            name: srcDirectory,
+            checkIfExist: false
+        },
+        {
+            name: componentsDirectory,
+            checkIfExist: false
+        },
+        {
+            name: componentDirectory,
+            checkIfExist: true
+        }
+    ]
+);
+
 const getComponentName = name => {
     const nameArr = name.split('-');
     const first = nameArr[0].charAt(0).toUpperCase() + nameArr[0].slice(1);
@@ -122,22 +139,7 @@ const _main = async (argv) => {
         if(checkComponentName(componentName)){
             componentNameCc = getComponentName(componentName);
             componentDirectory = resolve(componentsDirectory,componentName);
-
-            const listDirectory = [
-                {
-                    name: srcDirectory,
-                    checkIfExist: false
-                },
-                {
-                    name: componentsDirectory,
-                    checkIfExist: false
-                },
-                {
-                    name: componentDirectory,
-                    checkIfExist: true
-                }
-            ];
-
+            const listDirectory = getListDirectory(componentDirectory);
             try{
                 await componentCreate(listDirectory);
                 
