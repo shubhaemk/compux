@@ -37,13 +37,13 @@ const getComponentName = name => {
     return `${first}${second}`
 }
 
-const isDirectory = directory => {
+const fileType = file => {
     return new Promise((resolve,reject)=>{
-        stat(directory,(err,stats)=>{
+        stat(file,(err,stats)=>{
             if (err){
                 reject({
                     code: 4002,
-                    file: directory
+                    file: file
                 });
             }
             if (stats.isDirectory()){
@@ -51,7 +51,7 @@ const isDirectory = directory => {
             }else{
                 reject({
                     code: 4001,
-                    file: directory
+                    file: file
                 });
             }
             return;
@@ -59,13 +59,13 @@ const isDirectory = directory => {
     });
 };
 
-const fileExists = directory => {
+const fileExists = file => {
     return new Promise((resolve,reject)=>{
-        access(directory,err => {
+        access(file,err => {
             if(err){
                 reject({
                     code: 4000,
-                    file: directory
+                    file: file
                 });
             }else{
                 resolve(true);
@@ -74,13 +74,13 @@ const fileExists = directory => {
     });
 };
 
-const createDirectory = directory => {
+const fileCreate = file => {
     return new Promise((resolve,reject) => {
-        mkdir(directory,err => {
+        mkdir(file,{ recursive: true },err => {
             if(err){
                 reject({
                     code: 4003,
-                    file: directory
+                    file: file
                 });
             }else{
                 resolve(true);
@@ -89,11 +89,50 @@ const createDirectory = directory => {
     });
 };
 
+const componentCreatePromise = directory => {
+    return new Promise((resolve,reject) => {
+        fileExists(directory.name)
+            .then(srcExist => {
+                if (srcExist) {
+                    console.log(`found - ${directory.name}`);
+                }
+                return fileType(directory.name);
+            })
+            .then(isDir => {
+                console.log(`isDirectory? true - ${directory.name}`);
+                resolve();
+            })
+            .catch(error => {
+                if (error.code === 4000 && directory.create) {
+                    console.log(`creating - ${directory.name}`);
+                    return fileCreate(directory.name);
+                }
+                if (error.code === 4001) {
+                    console.log(`isDirectory? false - ${directory.name}`);
+                    reject(error);
+                }
+            })
+            .then(success => {
+                if (success) {
+                    console.log(`created - ${directory.name}`);
+                    resolve();
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                reject(error);
+            });
+    });
+};
+
+const componentCreate = (listDir) => {
+    return Promise.all(listDir.map(dir => componentCreatePromise(dir)));
+}
 
 
 
 
-const _main = (argv) => {
+const _main = async (argv) => {
     if(argv.length > 1){
         console.log('Error! I dont accept more than 1 parameter!')
     }else{
@@ -117,34 +156,14 @@ const _main = (argv) => {
                 }
             ];
 
-            fileExists(componentsDirectory)
-            .then(srcExist => {
-                if(srcExist){
-                    console.log('/src exist!');
+            try{
+                let x = componentCreate(listDir);
+                if(x){
+                    console.log('Done!');
                 }
-                return isDirectory(componentsDirectory);
-            })
-            .then(isDir => {
-                if (isDir) {
-                    console.log('Is directory');
-                }
-            })
-            .catch(error => {
-                if(error.code === 4000){
-                    return createDirectory(componentsDirectory);
-                }
-                if(error.code === 4001){
-                    console.log('Cant go any further than this');
-                }
-            })
-            .then(success => {
-                if(success){
-                    console.log('Created new dir!')
-                }
-            })
-            .catch(error => {
+            }catch(error){
                 console.log(error);
-            });
+            }
             
         }else{
             console.log(`Use component name of format 'component-name'`)
