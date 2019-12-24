@@ -1,10 +1,5 @@
 #!/usr/bin/env node
 
-/**
- * srcDirectory - Represents source directory
- * componentDirectory - Represents component directory in src
- * argv - Array of passed options
- */
 import "regenerator-runtime/runtime";
 import { access, stat, mkdir } from 'fs';
 import { resolve } from 'path';
@@ -16,17 +11,13 @@ let componentName;
 let componentDirectory;
 let componentNameCc;
 
-const checkComponentName = name => {
-    //RegExp('[a-zA-Z]+[-][a-zA-Z]+').test(name) doesn't work might do manual search!
-    
+const checkComponentName = name => {    
     if(name.lastIndexOf('-') !== name.indexOf('-'))
     return false;
-
     for(let char of name){
         if(isNaN(char) === false)
         return false;
     }
-
     return true;
 }
 
@@ -39,36 +30,35 @@ const getComponentName = name => {
 
 const fileType = file => {
     return new Promise((resolve,reject)=>{
-        stat(file,(err,stats)=>{
-            if (err){
+        stat(file,(error,stats)=>{
+            if (error){
                 reject({
                     code: 4002,
                     file: file
                 });
             }
             if (stats.isDirectory()){
-                resolve(true);
+                resolve();
             }else{
                 reject({
                     code: 4001,
                     file: file
                 });
             }
-            return;
         });
     });
 };
 
 const fileExists = file => {
     return new Promise((resolve,reject)=>{
-        access(file,err => {
-            if(err){
+        access(file,error => {
+            if(error){
                 reject({
                     code: 4000,
                     file: file
                 });
             }else{
-                resolve(true);
+                resolve();
             }
         });
     });
@@ -76,39 +66,45 @@ const fileExists = file => {
 
 const fileCreate = file => {
     return new Promise((resolve,reject) => {
-        mkdir(file,{ recursive: true },err => {
-            if(err){
+        mkdir(file,{ recursive: true },error => {
+            if(error){
                 reject({
                     code: 4003,
                     file: file
                 });
             }else{
-                resolve(true);
+                resolve();
             }
         })
     });
 };
 
-const componentCreatePromise = async (directory) => {
-    return new Promise( async (resolve,reject) => {
+const componentCreatePromise = directory => {
+    return new Promise(async (resolve,reject) => {
         try{
             await fileExists(directory.name);
-            console.log(`found - ${directory.name}`);
-            await fileType(directory.name);
-            console.log(`isDirectory? true - ${directory.name}`);
+            if(directory.create){
+                reject({
+                    code: 4004,
+                    file: directory.name
+                });
+            }else{
+                try {
+                    await fileType(directory.name);
+                } catch (error) {
+                    reject(error);
+                }
+            }
         }catch(error){
             if (error.code === 4000 && directory.create) {
-                console.log(`creating - ${directory.name}`);
                 try{
                     await fileCreate(directory.name);
-                    console.log(`created - ${directory.name}`);
                     resolve();
                 }catch(error){
                     reject(error);
                 }
             }
             if (error.code === 4001) {
-                console.log(`isDirectory? false - ${directory.name}`);
                 reject(error);
             }
         }
@@ -128,7 +124,7 @@ const _main = async (argv) => {
             componentNameCc = getComponentName(componentName);
             componentDirectory = resolve(componentsDirectory,componentName);
 
-            const listDir = [
+            const listDirectory = [
                 {
                     name: srcDirectory,
                     create: false
@@ -144,7 +140,7 @@ const _main = async (argv) => {
             ];
 
             try{
-                let x = await componentCreate(listDir);
+                let x = await componentCreate(listDirectory);
                 if(x){
                     console.log('Done!');
                 }
