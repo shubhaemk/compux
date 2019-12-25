@@ -82,6 +82,7 @@ const fileExists = file => {
 };
 
 const fileCreate = file => {
+    console.log(file);
     return new Promise((resolve,reject) => {
         mkdir(file,{ recursive: true },error => {
             if(error){
@@ -142,7 +143,12 @@ const _main = async (argv) => {
             const listDirectory = getListDirectory(componentDirectory);
             try{
                 await componentCreate(listDirectory);
-                
+                try{
+                    //creates folder insead!
+                    await fileCreate(resolve(componentDirectory,`${componentName}.component.jsx`));
+                }catch(error){
+                    console.log(error);
+                }
             }catch(error){
                 //do error handling
                 console.log(error);
@@ -152,6 +158,6 @@ const _main = async (argv) => {
             console.log(`Use component name of format 'component-name'`)
         }
     }
-}
+};
 
 _main(argv);
