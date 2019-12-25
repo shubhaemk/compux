@@ -1,3 +1,6 @@
-module.exports = {
-    presets: ["@babel/env","minify"]
+module.exports = function(api){
+    api.cache(true);
+    return {
+        "presets" : ["@babel/env", "minify"]
+    }
 };
