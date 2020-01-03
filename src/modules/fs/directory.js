@@ -1,7 +1,7 @@
 import { access, stat, mkdir } from 'fs';
 
-export const isDirectory = file => {
-    return new Promise((resolve, reject) => {
+export const isDirectory = file => (
+    new Promise((resolve, reject) => {
         stat(file, (error, stats) => {
             if (error) {
                 reject({
@@ -18,11 +18,11 @@ export const isDirectory = file => {
                 });
             }
         });
-    });
-};
+    })
+)
 
-export const isAccessible = file => {
-    return new Promise((resolve, reject) => {
+export const isAccessible = file => (
+    new Promise((resolve, reject) => {
         access(file, error => {
             if (error) {
                 reject({
@@ -33,11 +33,11 @@ export const isAccessible = file => {
                 resolve();
             }
         });
-    });
-};
+    })
+)
 
-export const createDirectory = file => {
-    return new Promise((resolve, reject) => {
+export const createDirectory = file => (
+    new Promise((resolve, reject) => {
         mkdir(file, { recursive: true }, error => {
             if (error) {
                 reject({
@@ -48,5 +48,5 @@ export const createDirectory = file => {
                 resolve();
             }
         })
-    });
-};
+    })
+)
