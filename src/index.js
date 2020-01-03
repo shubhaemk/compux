@@ -47,7 +47,7 @@ const componentCreatePromise = directory => {
     });
 };
 
-const componentCreate = async (listDir) => {
+const componentDirCreate = async (listDir) => {
     return Promise.all(listDir.map(dir => componentCreatePromise(dir)));
 }
 
@@ -61,10 +61,10 @@ const _main = async (argv) => {
             componentDirectory = resolve(componentsDirectory,componentName);
             const listDirectory = getListDirectory(srcDirectory,componentsDirectory,componentDirectory);
             try{
-                await componentCreate(listDirectory);
+                await componentDirCreate(listDirectory);
                 try{
                     //creates folder insead!
-                    await createDirectory(resolve(componentDirectory,`${componentName}.component.jsx`));
+                    
                 }catch(error){
                     console.log(error);
                 }
