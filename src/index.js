@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
+import { checkComponentName, getListDirectory, getComponentName } from "./modules/string/name";
+import { isDirectory, isAccessible, createDirectory } from './modules/fs/directory'
+
 import "regenerator-runtime/runtime";
-import { access, stat, mkdir } from 'fs';
+
 import { resolve } from 'path';
+
 const srcDirectory = resolve(process.cwd(),'src');
 const componentsDirectory = resolve(srcDirectory,'components');
 const [,,...argv] = process.argv;
@@ -11,96 +15,11 @@ let componentName;
 let componentDirectory;
 let componentNameCc;
 
-const checkComponentName = name => {    
-    if(name.lastIndexOf('-') !== name.indexOf('-'))
-    return false;
-    for(let char of name){
-        if(isNaN(char) === false)
-        return false;
-    }
-    return true;
-}
-
-const getListDirectory = componentDirectory => (
-    [
-        {
-            name: srcDirectory,
-            checkIfExist: false
-        },
-        {
-            name: componentsDirectory,
-            checkIfExist: false
-        },
-        {
-            name: componentDirectory,
-            checkIfExist: true
-        }
-    ]
-);
-
-const getComponentName = name => {
-    const nameArr = name.split('-');
-    const first = nameArr[0].charAt(0).toUpperCase() + nameArr[0].slice(1);
-    const second = nameArr[1].charAt(0).toUpperCase() + nameArr[1].slice(1);
-    return `${first}${second}`
-}
-
-const fileType = file => {
-    return new Promise((resolve,reject)=>{
-        stat(file,(error,stats)=>{
-            if (error){
-                reject({
-                    code: 4002,
-                    file: file
-                });
-            }
-            if (stats.isDirectory()){
-                resolve();
-            }else{
-                reject({
-                    code: 4001,
-                    file: file
-                });
-            }
-        });
-    });
-};
-
-const fileExists = file => {
-    return new Promise((resolve,reject)=>{
-        access(file,error => {
-            if(error){
-                reject({
-                    code: 4000,
-                    file: file
-                });
-            }else{
-                resolve();
-            }
-        });
-    });
-};
-
-const fileCreate = file => {
-    console.log(file);
-    return new Promise((resolve,reject) => {
-        mkdir(file,{ recursive: true },error => {
-            if(error){
-                reject({
-                    code: 4003,
-                    file: file
-                });
-            }else{
-                resolve();
-            }
-        })
-    });
-};
 
 const componentCreatePromise = directory => {
     return new Promise(async (resolve,reject) => {
         try{
-            await fileExists(directory.name);
+            await isAccessible(directory.name);
             if(directory.checkIfExist){
                 reject({
                     code: 4004,
@@ -108,7 +27,7 @@ const componentCreatePromise = directory => {
                 });
             }else{
                 try {
-                    await fileType(directory.name);
+                    await isDirectory(directory.name);
                     resolve();
                 } catch (error) {
                     reject(error);
@@ -117,7 +36,7 @@ const componentCreatePromise = directory => {
         }catch(error){
             if (error.code === 4000) {
                 try{
-                    await fileCreate(directory.name);
+                    await createDirectory(directory.name);
                     resolve();
                 }catch(error){
                     reject(error);
@@ -140,12 +59,12 @@ const _main = async (argv) => {
         if(checkComponentName(componentName)){
             componentNameCc = getComponentName(componentName);
             componentDirectory = resolve(componentsDirectory,componentName);
-            const listDirectory = getListDirectory(componentDirectory);
+            const listDirectory = getListDirectory(srcDirectory,componentsDirectory,componentDirectory);
             try{
                 await componentCreate(listDirectory);
                 try{
                     //creates folder insead!
-                    await fileCreate(resolve(componentDirectory,`${componentName}.component.jsx`));
+                    await createDirectory(resolve(componentDirectory,`${componentName}.component.jsx`));
                 }catch(error){
                     console.log(error);
                 }
