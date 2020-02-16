@@ -9,6 +9,14 @@ This library will make React Component management easy
 
 ## Usage
 
+### Installation
+
+```
+npm install -g compux
+or
+yarn global add compux
+```
+
 ### Class Components
 
 ```
