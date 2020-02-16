@@ -4,8 +4,8 @@ This library will make React Component management easy
 
 ## Features
 
-- [*] Creates React component with one command
-- [*] Can create Class as well as Functional React Components
+- Creates React component with one command
+- Can create Class as well as Functional React Components
 
 ## Usage
 
